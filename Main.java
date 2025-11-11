@@ -1,11 +1,21 @@
 import java.util.Random;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         Grid grid = new Grid(10, 8);          // Opret et 10x8 grid
         grid.placeObjects(55, 10, 5);// Placer 55 træer, 10 sten og 5 vandfelter
         grid.chooseBurningTree(12);
-        grid.print();                        // Udskriv gitteret
+        grid.print();                       // Udskriv gitteret
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter number of row (0-9): ");
+        int row = input.nextInt();
+        System.out.print("Enter number of column (0-7): ");
+        int col = input.nextInt();
+        grid.placeWater(row, col);
+        grid.print();
+        grid.fireUpdate();
+        grid.print();
     }
 }
 
@@ -65,6 +75,12 @@ class Grid {
         }
     }
 
+    public boolean wall(int row, int col){
+
+        return row  >= 0 && row <= 9 && col >= 0 && col <= 7;
+
+    }
+
     // Placer et antal objekter tilfældigt i gitteret
     public void placeObjects(int countTree, int countStone, int countWater) {
         placeRandomObject('T', countTree);
@@ -98,6 +114,94 @@ class Grid {
                 burnedTreePlaced++;
             }
         }
+
+    }
+    public void placeWater(int row,  int col) {
+
+        if(!(wall(row, col))) {
+            System.out.println("Outside of grid please enter a valid row and collom");
+            return;
+        }
+
+        if(cells[row][col].isStone()) {
+            System.out.println("Placed on a cell containing a stone, nothing happens. so try another cell");
+            return;
+        }
+
+        if(cells[row][col].IsBurningTree()) {
+            cells[row][col].setSymbol('W');
+        }
+        waterSpreading(row, col,-1, 0);
+        waterSpreading(row, col,1, 0);
+        waterSpreading(row, col, 0, 1);
+        waterSpreading(row, col, 0, -1);
+
+    }
+
+    public void waterSpreading(int row, int col, int drow, int dcol) {
+
+         while (wall(row, col)) {
+             if (cells[row][col].isStone()) {
+                 return;
+             }
+             if (cells[row][col].IsBurningTree()) {
+                 cells[row][col].setSymbol('W');
+             }
+             row += drow;
+             col += dcol;
+         }
+    }
+
+    public void fireUpdate(){
+        final double chance =0.75;
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                if(cells[r][c].IsBurningTree()) {
+                    cells[r][c].setSymbol('.');
+                }
+            }
+
+        }
+        for(int  r = 0; r < rows; r++){
+            for(int c = 0; c < cols; c++){
+                if(cells[r][c].isTree() && fireNeighbour(r, c)) {
+                    if(chance > Random.NextDouble()){
+                        cells[r][c].setSymbol('B');
+                    }
+                }
+
+            }
+        }
+
+    }
+
+    public boolean fireNeighbour(int row, int col) {
+        int[][] arrayDirection = {{-1,0}, {-1,1}, {0,1}, {1,1}, {1,0}, {1,-1}, {0,-1}, {-1,-1}};
+        if(cells[row-1][col].IsBurningTree()) {
+            return true;
+        }
+        if(cells[row-1][col+1].IsBurningTree()) {
+            return true;
+        }
+        if(cells[row][col+1].IsBurningTree()) {
+            return true;
+        }
+        if(cells[row+1][col+1].IsBurningTree()) {
+            return true;
+        }
+        if(cells[row+1][col].IsBurningTree()) {
+            return true;
+        }
+        if(cells[row+1][col-1].IsBurningTree()) {
+            return true;
+        }
+        if(cells[row][col-1].IsBurningTree()) {
+            return true;
+        }
+        if(cells[row-1][col-1].IsBurningTree()) {
+            return true;
+        }
+        else return false;
 
     }
 
