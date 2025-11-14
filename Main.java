@@ -7,15 +7,23 @@ public class Main {
         grid.placeObjects(55, 10, 5);// Placer 55 træer, 10 sten og 5 vandfelter
         grid.chooseBurningTree(12);
         grid.print();                       // Udskriv gitteret
-        Scanner input = new Scanner(System.in);
-        System.out.print("Enter number of row (0-9): ");
-        int row = input.nextInt();
-        System.out.print("Enter number of column (0-7): ");
-        int col = input.nextInt();
-        grid.placeWater(row, col);
-        grid.print();
-        grid.fireUpdate();
-        grid.print();
+
+
+
+        while (grid.hasfire()) {
+            Scanner input = new Scanner(System.in);
+            System.out.print("Enter number of row (0-9): ");
+            int row = input.nextInt();
+            System.out.print("Enter number of column (0-7): ");
+            int col = input.nextInt();
+            grid.placeWater(row, col);
+            grid.print();
+            System.out.println("Water has spread to the cell (" + row + "," + col + ")");
+            grid.fireUpdate();
+            grid.print();
+            grid.fireCount();
+            grid.treeCount();
+        }
     }
 }
 
@@ -154,56 +162,95 @@ class Grid {
 
     public void fireUpdate(){
         final double chance =0.75;
+        Random rand = new Random();
+        boolean[][] nextFire = new boolean[rows][cols];
+        int firespreading = 0;
+
+        for(int  r = 0; r < rows; r++){
+            for(int c = 0; c < cols; c++){
+                if(cells[r][c].isTree() && fireNeighbour(r, c)) {
+                    if(rand.nextDouble() < chance){
+                        nextFire[r][c] = true;
+                        firespreading++;
+                    }
+                }
+            }
+        }
+        System.out.println("There are " + firespreading + " fire that had spread");
+
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 if(cells[r][c].IsBurningTree()) {
                     cells[r][c].setSymbol('.');
                 }
-            }
-
-        }
-        for(int  r = 0; r < rows; r++){
-            for(int c = 0; c < cols; c++){
-                if(cells[r][c].isTree() && fireNeighbour(r, c)) {
-                    if(chance > Random.NextDouble()){
-                        cells[r][c].setSymbol('B');
-                    }
+                if(nextFire[r][c]) {
+                    cells[r][c].setSymbol('B');
                 }
-
             }
+
         }
+
 
     }
 
     public boolean fireNeighbour(int row, int col) {
-        int[][] arrayDirection = {{-1,0}, {-1,1}, {0,1}, {1,1}, {1,0}, {1,-1}, {0,-1}, {-1,-1}};
-        if(cells[row-1][col].IsBurningTree()) {
+
+        //north
+        if(wall(row-1, col) && cells[row-1][col].IsBurningTree()) {
             return true;
         }
-        if(cells[row-1][col+1].IsBurningTree()) {
+        //west
+        if(wall(row, col+1) && cells[row][col+1].IsBurningTree() ) {
             return true;
         }
-        if(cells[row][col+1].IsBurningTree()) {
+        //south
+        if(wall(row+1, col) && cells[row+1][col].IsBurningTree()) {
             return true;
         }
-        if(cells[row+1][col+1].IsBurningTree()) {
-            return true;
-        }
-        if(cells[row+1][col].IsBurningTree()) {
-            return true;
-        }
-        if(cells[row+1][col-1].IsBurningTree()) {
-            return true;
-        }
-        if(cells[row][col-1].IsBurningTree()) {
-            return true;
-        }
-        if(cells[row-1][col-1].IsBurningTree()) {
+        //east
+        if(wall(row, col-1) && cells[row][col-1].IsBurningTree()) {
             return true;
         }
         else return false;
 
     }
+
+    public boolean hasfire(){
+        for(int r = 0; r < rows; r++){
+            for(int c = 0; c < cols; c++){
+                if(cells[r][c].IsBurningTree()) {
+                    return true;
+
+                }
+            }
+        }
+        return false;
+    }
+
+    public void treeCount(){
+        int treeCount = 0;
+        for(int r = 0; r < rows; r++){
+            for(int c = 0; c < cols; c++){
+                if(cells[r][c].isTree()) {
+                    treeCount++;
+                }
+            }
+        }
+        System.out.println("There are " + treeCount + " trees in the grid");
+
+    }
+    public void fireCount(){
+        int fireCount = 0;
+        for(int r = 0; r < rows; r++){
+            for(int c = 0; c < cols; c++){
+                if(cells[r][c].IsBurningTree()) {
+                    fireCount++;
+                }
+            }
+        }
+        System.out.println("There are " + fireCount + " fires in the grid");
+    }
+
 
     // Udskriver gitteret pænt
     public void print() {
