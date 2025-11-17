@@ -236,7 +236,7 @@ symbols if the water hits a cell contains a burning tree, and stops spreading if
         }
         return false;
     }
-
+// this method display the counts of trees as texst, 
     public void treeCount(){
         int treeCount = 0;
         for(int r = 0; r < rows; r++){
@@ -249,6 +249,7 @@ symbols if the water hits a cell contains a burning tree, and stops spreading if
         System.out.println("There are " + treeCount + " trees in the grid");
 
     }
+    // this method display the counts of fire as a texst
     public void fireCount(){
         int fireCount = 0;
         for(int r = 0; r < rows; r++){
@@ -262,7 +263,7 @@ symbols if the water hits a cell contains a burning tree, and stops spreading if
     }
 
 
-    // Udskriver gitteret pænt
+    // this method handles the grid and display it.
     public void print() {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
