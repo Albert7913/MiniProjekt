@@ -127,7 +127,8 @@ class Grid {
 
     }
 
-    //this method handle where water is placed, and cant be placed on stone, and change the symbol from burning tree to water symbol
+    /*this method handle where water is placed and choose direction for the water so it spreads horizontal and vertical
+    , and cant be placed on stone, and change the symbol from burning tree to water symbol*/
     public void placeWater(int row,  int col) {
 
         if(!(wall(row, col))) {
@@ -167,7 +168,7 @@ symbols if the water hits a cell contains a burning tree, and stops spreading if
          }
     }
 
-//
+// 
 
     public void fireUpdate(){
         final double chance =0.75;
