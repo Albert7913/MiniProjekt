@@ -9,7 +9,9 @@ public class Main {
         grid.print();                       // Udskriv gitteret
 
 
-
+/*this while loop is taking user input, update the row and colloum and spread the water horizontal and vertical, and after update the spreading of fire,
+and print that output, adn then display how many trees and fire count. this while loop run until there is no more fires in the grid.
+        */
         while (grid.hasfire()) {
             Scanner input = new Scanner(System.in);
             System.out.print("Enter number of row (0-9): ");
@@ -27,7 +29,7 @@ public class Main {
     }
 }
 
-// Repræsenterer én celle i gitteret
+/* This represent the cells in the grid and fill them with characters correspontet to if its stone, fire etc.*/
 class Cell {
     private char symbol;
 
@@ -64,7 +66,7 @@ class Cell {
 
 }
 
-// Repræsenterer hele gitteret
+// this class represent the grid with cells, like before with symbols, in the main determand how many cells, symbols there is in the grid.
 class Grid {
     private int rows;
     private int cols;
@@ -82,20 +84,20 @@ class Grid {
             }
         }
     }
-
+    //this method helps when the fire method to not check arrays outside the indexs
     public boolean wall(int row, int col){
 
         return row  >= 0 && row <= 9 && col >= 0 && col <= 7;
 
     }
 
-    // Placer et antal objekter tilfældigt i gitteret
+    // this method places the symbols in cells
     public void placeObjects(int countTree, int countStone, int countWater) {
         placeRandomObject('T', countTree);
         placeRandomObject('S', countStone);
         placeRandomObject('W', countWater);
     }
-
+//
     public void placeRandomObject(char symbol, int count) {
         Random rand = new Random();
         int placedObejcts = 0;
@@ -109,7 +111,7 @@ class Grid {
             }
         }
     }
-
+// this method replace tree symbol with symbol b, as bruning tree, at 12 random cells that have a tree symbol 
     public void chooseBurningTree(int count) {
         Random rand = new Random();
         int burnedTreePlaced = 0;
@@ -124,6 +126,8 @@ class Grid {
         }
 
     }
+
+    //this method handle where water is placed, and cant be placed on stone, and change the symbol from burning tree to water symbol
     public void placeWater(int row,  int col) {
 
         if(!(wall(row, col))) {
@@ -145,7 +149,10 @@ class Grid {
         waterSpreading(row, col, 0, -1);
 
     }
-
+/* 
+this method handles water spreading so it spreading horizontal and vertical, and change the 
+symbols if the water hits a cell contains a burning tree, and stops spreading if the cell contains stone 
+*/
     public void waterSpreading(int row, int col, int drow, int dcol) {
 
          while (wall(row, col)) {
@@ -159,6 +166,8 @@ class Grid {
              col += dcol;
          }
     }
+
+//
 
     public void fireUpdate(){
         final double chance =0.75;
