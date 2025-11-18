@@ -3,15 +3,14 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Grid grid = new Grid(10, 8);          // Opret et 10x8 grid
+        Grid grid = new Grid(10, 8);          // creatig a 10x8 grid
         grid.placeObjects(55, 10, 5);// Placer 55 træer, 10 sten og 5 vandfelter
-        grid.chooseBurningTree(12);
-        grid.print();                       // Udskriv gitteret
+        grid.chooseBurningTree(12);  // the amount of burning trees  of the total amount of trees, in this case 12 out of 55 is burning. 
+        grid.print();                       // prints the grid. 
 
 
 /*this while loop is taking user input, update the row and colloum and spread the water horizontal and vertical, and after update the spreading of fire,
-and print that output, adn then display how many trees and fire count. this while loop run until there is no more fires in the grid.
-        */
+and print that output, and then display how many trees and fire count. this while loop run until there is no more fires in the grid.*/
         while (grid.hasfire()) {
             Scanner input = new Scanner(System.in);
             System.out.print("Enter number of row (0-9): ");
@@ -29,26 +28,25 @@ and print that output, adn then display how many trees and fire count. this whil
     }
 }
 
-/* This represent the cells in the grid and fill them with characters correspontet to if its stone, fire etc.*/
+/* This class represents the cells in the grid and fill them with characters correspontet to if its stone, fire etc.*/
 class Cell {
     private char symbol;
-
     public Cell() {
-        this.symbol = '.'; // Standard: tom celle
+        this.symbol = '.'; // Standard: empty cell, and so called constructor method
     }
-
+// is a getter is a specific method that returnes the symbol of the cell
     public char getSymbol() {
         return symbol;
     }
-
+// is a setter, makes it possible to set a cell to contain a specific character. 
     public void setSymbol(char symbol) {
         this.symbol = symbol;
     }
-
+// this method test if the symbol in the cell contains capital letter in this case a T, that represents a tree and is applicable to the rest boolens in this class 
     public boolean isTree() {
         return symbol == 'T';
     }
-
+    
     public boolean isStone() {
         return symbol == 'S';
     }
@@ -68,10 +66,12 @@ class Cell {
 
 // this class represent the grid with cells, like before with symbols, in the main determand how many cells, symbols there is in the grid.
 class Grid {
+    // these private varibales is a instance variable, so not changeable,
     private int rows;
     private int cols;
     private Cell[][] cells;
 
+// this set the grid contains of rows and colloms, 
     public Grid(int rows, int cols) {
         this.rows = rows;
         this.cols = cols;
@@ -85,19 +85,19 @@ class Grid {
         }
     }
     //this method helps when the fire method to not check arrays outside the indexs
-    public boolean wall(int row, int col){
+    public boolean ingrid(int row, int col){
 
-        return row  >= 0 && row <= 9 && col >= 0 && col <= 7;
+        return row  >= 0 && row <= rows && col >= 0 && col <= cols;
 
     }
 
-    // this method places the symbols in cells
+    // this method changes the symbols in cells from empty to a corresponding symbol to either stone, tree or water. for a spefic amount that it set in Main. 
     public void placeObjects(int countTree, int countStone, int countWater) {
         placeRandomObject('T', countTree);
         placeRandomObject('S', countStone);
         placeRandomObject('W', countWater);
     }
-//
+    
     public void placeRandomObject(char symbol, int count) {
         Random rand = new Random();
         int placedObejcts = 0;
@@ -111,7 +111,7 @@ class Grid {
             }
         }
     }
-// this method replace tree symbol with symbol b, as bruning tree, at 12 random cells that have a tree symbol 
+// this method replace tree symbol with symbol B, as bruning tree, in a random cell containing a tree symbol, a set number of times. 
     public void chooseBurningTree(int count) {
         Random rand = new Random();
         int burnedTreePlaced = 0;
@@ -131,7 +131,7 @@ class Grid {
     , and cant be placed on stone, and change the symbol from burning tree to water symbol*/
     public void placeWater(int row,  int col) {
 
-        if(!(wall(row, col))) {
+        if(!(ingrid(row, col))) {
             System.out.println("Outside of grid please enter a valid row and collom");
             return;
         }
@@ -156,7 +156,7 @@ symbols if the water hits a cell contains a burning tree, and stops spreading if
 */
     public void waterSpreading(int row, int col, int drow, int dcol) {
 
-         while (wall(row, col)) {
+         while (ingrid(row, col)) {
              if (cells[row][col].isStone()) {
                  return;
              }
@@ -206,19 +206,19 @@ symbols if the water hits a cell contains a burning tree, and stops spreading if
     public boolean fireNeighbour(int row, int col) {
 
         //north
-        if(wall(row-1, col) && cells[row-1][col].IsBurningTree()) {
+        if(ingrid(row-1, col) && cells[row-1][col].IsBurningTree()) {
             return true;
         }
         //west
-        if(wall(row, col+1) && cells[row][col+1].IsBurningTree() ) {
+        if(ingrid(row, col+1) && cells[row][col+1].IsBurningTree() ) {
             return true;
         }
         //south
-        if(wall(row+1, col) && cells[row+1][col].IsBurningTree()) {
+        if(ingrid(row+1, col) && cells[row+1][col].IsBurningTree()) {
             return true;
         }
         //east
-        if(wall(row, col-1) && cells[row][col-1].IsBurningTree()) {
+        if(ingrid(row, col-1) && cells[row][col-1].IsBurningTree()) {
             return true;
         }
         else return false;
