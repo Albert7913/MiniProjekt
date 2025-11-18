@@ -3,14 +3,14 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Grid grid = new Grid(10, 8);          // creatig a 10x8 grid
-        grid.placeObjects(55, 10, 5);// Placer 55 træer, 10 sten og 5 vandfelter
-        grid.chooseBurningTree(12);  // the amount of burning trees  of the total amount of trees, in this case 12 out of 55 is burning. 
-        grid.print();                       // prints the grid. 
+        Grid grid = new Grid(10, 8);          // creating a 10x8 grid
+        grid.placeObjects(55, 10, 5);         // Place 55 trees, 10 stones and 5 water tiles
+        grid.chooseBurningTree(12);           // the number of burning trees out of the total number of trees, in this case 12 out of 55 are burning.
+        grid.print();                         // prints the grid.
 
-
-/*this while loop is taking user input, update the row and colloum and spread the water horizontal and vertical, and after update the spreading of fire,
-and print that output, and then display how many trees and fire count. this while loop run until there is no more fires in the grid.*/
+        /* this while loop takes user input, updates the row and column, and spreads the water horizontally and vertically.
+           After that it updates the spreading of fire, prints the output, and then displays how many trees and fires there are.
+           This while loop runs until there are no more fires in the grid. */
         while (grid.hasfire()) {
             Scanner input = new Scanner(System.in);
             System.out.print("Enter number of row (0-9): ");
@@ -28,25 +28,30 @@ and print that output, and then display how many trees and fire count. this whil
     }
 }
 
-/* This class represents the cells in the grid and fill them with characters correspontet to if its stone, fire etc.*/
+/* This class represents the cells in the grid and fills them with characters corresponding to whether it is stone, fire, etc. */
 class Cell {
     private char symbol;
+
     public Cell() {
-        this.symbol = '.'; // Standard: empty cell, and so called constructor method
+        this.symbol = '.'; // Default: empty cell, so-called constructor method
     }
-// is a getter is a specific method that returnes the symbol of the cell
+
+    // getter: a specific method that returns the symbol of the cell
     public char getSymbol() {
         return symbol;
     }
-// is a setter, makes it possible to set a cell to contain a specific character. 
+
+    // setter: makes it possible to set a cell to contain a specific character
     public void setSymbol(char symbol) {
         this.symbol = symbol;
     }
-// this method test if the symbol in the cell contains capital letter in this case a T, that represents a tree and is applicable to the rest boolens in this class 
+
+    // this method tests if the symbol in the cell is a capital letter T, which represents a tree;
+    // similar logic applies to the other booleans in this class
     public boolean isTree() {
         return symbol == 'T';
     }
-    
+
     public boolean isStone() {
         return symbol == 'S';
     }
@@ -58,46 +63,45 @@ class Cell {
     public boolean isEmpty() {
         return symbol == '.';
     }
+
     public boolean IsBurningTree() {
         return symbol == 'B';
     }
-
 }
 
-// this class represent the grid with cells, like before with symbols, in the main determand how many cells, symbols there is in the grid.
+// this class represents the grid with cells, like before with symbols;
+// in main it is determined how many cells/symbols there are in the grid
 class Grid {
-    // these private varibales is a instance variable, so not changeable,
+    // these private variables are instance variables, so not directly changeable from outside
     private int rows;
     private int cols;
     private Cell[][] cells;
 
-// this set the grid contains of rows and colloms, 
+    // this sets up the grid to contain a certain number of rows and columns
     public Grid(int rows, int cols) {
         this.rows = rows;
         this.cols = cols;
-
         cells = new Cell[rows][cols];
-
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 cells[r][c] = new Cell();
             }
         }
     }
-    //this method helps when the fire method to not check arrays outside the indexs
-    public boolean ingrid(int row, int col){
 
-        return row  >= 0 && row <= rows && col >= 0 && col <= cols;
-
+    // this method helps the fire method to not check array positions outside the indexes
+    public boolean ingrid(int row, int col) {
+        return row >= 0 && row <= rows && col >= 0 && col <= cols;
     }
 
-    // this method changes the symbols in cells from empty to a corresponding symbol to either stone, tree or water. for a spefic amount that it set in Main. 
+    // this method changes the symbols in cells from empty to a corresponding symbol:
+    // either stone, tree or water, for a specific amount set in Main
     public void placeObjects(int countTree, int countStone, int countWater) {
         placeRandomObject('T', countTree);
         placeRandomObject('S', countStone);
         placeRandomObject('W', countWater);
     }
-    
+
     public void placeRandomObject(char symbol, int count) {
         Random rand = new Random();
         int placedObejcts = 0;
@@ -111,7 +115,9 @@ class Grid {
             }
         }
     }
-// this method replace tree symbol with symbol B, as bruning tree, in a random cell containing a tree symbol, a set number of times. 
+
+    // this method replaces the tree symbol with the symbol B, as a burning tree,
+    // in a random cell containing a tree symbol, a set number of times
     public void chooseBurningTree(int count) {
         Random rand = new Random();
         int burnedTreePlaced = 0;
@@ -124,137 +130,124 @@ class Grid {
                 burnedTreePlaced++;
             }
         }
-
     }
 
-    /*this method handle where water is placed and choose direction for the water so it spreads horizontal and vertical
-    , and cant be placed on stone, and change the symbol from burning tree to water symbol*/
-    public void placeWater(int row,  int col) {
-
-        if(!(ingrid(row, col))) {
-            System.out.println("Outside of grid please enter a valid row and collom");
+    /* this method handles where water is placed and chooses the direction for the water so it spreads horizontally and vertically.
+       It cannot be placed on stone, and it changes the symbol from burning tree to water. */
+    public void placeWater(int row, int col) {
+        if (!(ingrid(row, col))) {
+            System.out.println("Outside of grid, please enter a valid row and column");
             return;
         }
-
-        if(cells[row][col].isStone()) {
-            System.out.println("Placed on a cell containing a stone, nothing happens. so try another cell");
+        if (cells[row][col].isStone() || cells[row][col].isWater()) {
+            System.out.println("Placed on a cell containing a stone or water, nothing happens. Try another cell");
             return;
         }
-
-        if(cells[row][col].IsBurningTree()) {
+        if (cells[row][col].IsBurningTree()) {
             cells[row][col].setSymbol('W');
         }
-        waterSpreading(row, col,-1, 0);
-        waterSpreading(row, col,1, 0);
+        // this corresponds to the direction of water spreading: north, east, south and west
+        waterSpreading(row, col, -1, 0);
+        waterSpreading(row, col, 1, 0);
         waterSpreading(row, col, 0, 1);
         waterSpreading(row, col, 0, -1);
-
     }
-/* 
-this method handles water spreading so it spreading horizontal and vertical, and change the 
-symbols if the water hits a cell contains a burning tree, and stops spreading if the cell contains stone 
-*/
+
+    /*
+       this method handles water spreading so it spreads horizontally and vertically,
+       changes the symbols if the water hits a cell containing a burning tree,
+       and stops spreading if the cell contains stone or water
+    */
     public void waterSpreading(int row, int col, int drow, int dcol) {
-
-         while (ingrid(row, col)) {
-             if (cells[row][col].isStone()) {
-                 return;
-             }
-             if (cells[row][col].IsBurningTree()) {
-                 cells[row][col].setSymbol('W');
-             }
-             row += drow;
-             col += dcol;
-         }
+        while (ingrid(row, col)) {
+            if (cells[row][col].isStone() || cells[row][col].isWater()) {
+                return;
+            }
+            if (cells[row][col].IsBurningTree()) {
+                cells[row][col].setSymbol('W');
+            }
+            row += drow;
+            col += dcol;
+        }
     }
 
-// 
-
-    public void fireUpdate(){
-        final double chance =0.75;
+    public void fireUpdate() {
+        final double chance = 0.75;
         Random rand = new Random();
         boolean[][] nextFire = new boolean[rows][cols];
         int firespreading = 0;
-
-        for(int  r = 0; r < rows; r++){
-            for(int c = 0; c < cols; c++){
-                if(cells[r][c].isTree() && fireNeighbour(r, c)) {
-                    if(rand.nextDouble() < chance){
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                if (cells[r][c].isTree() && fireNeighbour(r, c)) {
+                    if (rand.nextDouble() < chance) {
                         nextFire[r][c] = true;
                         firespreading++;
                     }
                 }
             }
         }
-        System.out.println("There are " + firespreading + " fire that had spread");
-
+        System.out.println("There are " + firespreading + " fires that have spread");
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
-                if(cells[r][c].IsBurningTree()) {
+                if (cells[r][c].IsBurningTree()) {
                     cells[r][c].setSymbol('.');
                 }
-                if(nextFire[r][c]) {
+                if (nextFire[r][c]) {
                     cells[r][c].setSymbol('B');
                 }
             }
-
         }
-
-
     }
 
     public boolean fireNeighbour(int row, int col) {
-
-        //north
-        if(ingrid(row-1, col) && cells[row-1][col].IsBurningTree()) {
+        // north
+        if (ingrid(row - 1, col) && cells[row - 1][col].IsBurningTree()) {
             return true;
         }
-        //west
-        if(ingrid(row, col+1) && cells[row][col+1].IsBurningTree() ) {
+        // west
+        if (ingrid(row, col + 1) && cells[row][col + 1].IsBurningTree()) {
             return true;
         }
-        //south
-        if(ingrid(row+1, col) && cells[row+1][col].IsBurningTree()) {
+        // south
+        if (ingrid(row + 1, col) && cells[row + 1][col].IsBurningTree()) {
             return true;
         }
-        //east
-        if(ingrid(row, col-1) && cells[row][col-1].IsBurningTree()) {
+        // east
+        if (ingrid(row, col - 1) && cells[row][col - 1].IsBurningTree()) {
             return true;
-        }
-        else return false;
-
+        } else return false;
     }
 
-    public boolean hasfire(){
-        for(int r = 0; r < rows; r++){
-            for(int c = 0; c < cols; c++){
-                if(cells[r][c].IsBurningTree()) {
+    public boolean hasfire() {
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                if (cells[r][c].IsBurningTree()) {
                     return true;
-
                 }
             }
         }
         return false;
     }
-// this method display the counts of trees as texst, 
-    public void treeCount(){
+
+    // this method displays the count of trees as text
+    public void treeCount() {
         int treeCount = 0;
-        for(int r = 0; r < rows; r++){
-            for(int c = 0; c < cols; c++){
-                if(cells[r][c].isTree()) {
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                if (cells[r][c].isTree()) {
                     treeCount++;
                 }
             }
         }
         System.out.println("There are " + treeCount + " trees in the grid");
-
     }
-    // this method display the counts of fire as a texst
-    public void fireCount(){
+
+    // this method displays the count of fires as text
+    public void fireCount() {
         int fireCount = 0;
-        for(int r = 0; r < rows; r++){
-            for(int c = 0; c < cols; c++){
-                if(cells[r][c].IsBurningTree()) {
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                if (cells[r][c].IsBurningTree()) {
                     fireCount++;
                 }
             }
@@ -262,8 +255,7 @@ symbols if the water hits a cell contains a burning tree, and stops spreading if
         System.out.println("There are " + fireCount + " fires in the grid");
     }
 
-
-    // this method handles the grid and display it.
+    // this method handles the grid and displays it
     public void print() {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
