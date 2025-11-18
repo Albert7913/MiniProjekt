@@ -171,6 +171,9 @@ class Grid {
         }
     }
 
+    /**
+     * Simulates one time step of fire spread across the grid and updates cell states accordingly.
+     */
     public void fireUpdate() {
         final double chance = 0.75;
         Random rand = new Random();
@@ -199,6 +202,9 @@ class Grid {
         }
     }
 
+    /**
+     * Returns whether any of the four orthogonally adjacent cells to the given position contains a burning tree.
+     */
     public boolean fireNeighbour(int row, int col) {
         // north
         if (ingrid(row - 1, col) && cells[row - 1][col].IsBurningTree()) {
@@ -217,7 +223,7 @@ class Grid {
             return true;
         } else return false;
     }
-
+// this method checks if there are any fires left in the grid
     public boolean hasfire() {
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
